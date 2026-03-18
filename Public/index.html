@@ -1,0 +1,1546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🏥 Amrit Medicine Distribution System</title>
+  <style>
+    /* ===== RESET & BASE ===== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    
+    /* ===== CONTAINER ===== */
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+      overflow: hidden;
+      animation: fadeIn 0.5s ease-out;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* ===== HEADER ===== */
+    .header {
+      background: linear-gradient(135deg, #4285f4 0%, #34a853 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,0 L100,100 Z" fill="rgba(255,255,255,0.1)"/></svg>');
+      background-size: cover;
+    }
+    
+    .logo-container {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .amrit-logo {
+      height: 80px;
+      width: auto;
+      max-width: 250px;
+      border-radius: 10px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+      background: white;
+      padding: 5px;
+    }
+    
+    .header h1 {
+      font-size: 28px;
+      margin: 0;
+      background: linear-gradient(45deg, #fff, #f0f8ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .hindi-title {
+      font-size: 18px;
+      opacity: 0.95;
+      margin-top: 5px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+    
+    /* ===== FORM CONTAINER ===== */
+    .form-container {
+      padding: 40px;
+    }
+    
+    @media (max-width: 768px) {
+      .form-container {
+        padding: 20px;
+      }
+    }
+    
+    /* ===== FORM GROUPS ===== */
+    .form-group {
+      margin-bottom: 25px;
+      position: relative;
+    }
+    
+    label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+    
+    .required {
+      color: #e74c3c;
+      font-weight: bold;
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.6; }
+      100% { opacity: 1; }
+    }
+    
+    /* ===== INPUTS & SELECTS ===== */
+    select, input[type="text"], input[type="number"], textarea, input[type="file"] {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid #e1e5e9;
+      border-radius: 10px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      background: #f8f9fa;
+      font-family: inherit;
+    }
+    
+    select:focus, input:focus, textarea:focus {
+      outline: none;
+      border-color: #4285f4;
+      box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.1);
+      background: white;
+    }
+    
+    input[readonly] {
+      background-color: #f0f0f0;
+      cursor: not-allowed;
+    }
+    
+    /* ===== LAYOUT ===== */
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 25px;
+      margin-bottom: 20px;
+    }
+    
+    @media (max-width: 768px) {
+      .row {
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+    }
+    
+    /* ===== UTILITY CLASSES ===== */
+    .hidden {
+      display: none !important;
+    }
+    
+    .visible {
+      display: block !important;
+    }
+    
+    /* ===== EMPLOYEE INFO ===== */
+    .employee-info {
+      background: #e8f4fd;
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-top: 8px;
+      font-size: 14px;
+      border-left: 4px solid #4285f4;
+      animation: slideIn 0.3s ease;
+    }
+    
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-10px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    
+    .employee-info div {
+      margin: 5px 0;
+    }
+    
+    /* ===== MEDICINE SECTION ===== */
+    .medicine-section {
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      padding: 30px;
+      border-radius: 15px;
+      margin: 30px 0;
+      border-left: 5px solid #4285f4;
+      position: relative;
+    }
+    
+    .medicine-section h3 {
+      color: #333;
+      margin-bottom: 20px;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .medicine-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr auto;
+      gap: 15px;
+      align-items: center;
+      margin-bottom: 20px;
+      padding: 15px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+    
+    @media (max-width: 768px) {
+      .medicine-row {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+    }
+    
+    .add-medicine, .remove-medicine {
+      border: none;
+      padding: 12px 24px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    
+    .add-medicine {
+      background: #4285f4;
+      color: white;
+      width: 100%;
+      margin-top: 15px;
+    }
+    
+    .add-medicine:hover {
+      background: #3367d6;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(66, 133, 244, 0.3);
+    }
+    
+    .remove-medicine {
+      background: #ea4335;
+      color: white;
+      min-width: 50px;
+    }
+    
+    .remove-medicine:hover {
+      background: #d93025;
+      transform: scale(1.05);
+    }
+    
+    /* ===== GRAND TOTAL ===== */
+    .grand-total {
+      background: linear-gradient(135deg, #34a853, #137333);
+      color: white;
+      font-size: 28px;
+      font-weight: bold;
+      padding: 25px;
+      text-align: center;
+      border-radius: 15px;
+      margin: 30px 0;
+      box-shadow: 0 10px 30px rgba(52, 168, 83, 0.3);
+      animation: pulseTotal 2s infinite;
+    }
+    
+    @keyframes pulseTotal {
+      0% { box-shadow: 0 10px 30px rgba(52, 168, 83, 0.3); }
+      50% { box-shadow: 0 10px 40px rgba(52, 168, 83, 0.5); }
+      100% { box-shadow: 0 10px 30px rgba(52, 168, 83, 0.3); }
+    }
+    
+    /* ===== PHOTO/ATTACHMENT SECTION ===== */
+    .photo-section {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 30px;
+      border-radius: 15px;
+      text-align: center;
+      margin-bottom: 30px;
+      color: white;
+    }
+    
+    .upload-options {
+      display: flex;
+      gap: 20px;
+      margin: 20px 0;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    
+    .upload-option {
+      background: white;
+      color: #333;
+      border: 3px solid white;
+      padding: 15px 25px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+      min-width: 200px;
+      max-width: 300px;
+      justify-content: center;
+    }
+    
+    .upload-option:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      background: #f8f9fa;
+    }
+    
+    .upload-option.active {
+      background: #4285f4;
+      color: white;
+      border-color: #4285f4;
+    }
+    
+    /* ===== CAMERA SECTION ===== */
+    #cameraSection {
+      margin-top: 20px;
+    }
+    
+    #videoPreview {
+      width: 100%;
+      max-width: 400px;
+      height: 300px;
+      border-radius: 15px;
+      background: #000;
+      margin: 0 auto 20px;
+      border: 3px solid white;
+      object-fit: cover;
+    }
+    
+    .camera-controls {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin: 20px 0;
+      flex-wrap: wrap;
+    }
+    
+    .camera-btn, .switch-camera, .capture-btn, .file-btn {
+      background: white;
+      color: #333;
+      border: 3px solid white;
+      padding: 14px 24px;
+      border-radius: 30px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .camera-btn:hover, .switch-camera:hover, .capture-btn:hover:not(:disabled), .file-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+    
+    .capture-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .preview-img {
+      max-width: 300px;
+      max-height: 250px;
+      border-radius: 12px;
+      margin: 15px auto;
+      display: block;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      border: 3px solid white;
+    }
+    
+    .file-info {
+      background: white;
+      color: #333;
+      padding: 15px;
+      border-radius: 10px;
+      margin: 15px 0;
+      text-align: left;
+    }
+    
+    /* ===== SUBMIT BUTTON ===== */
+    .submit-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #4285f4 0%, #3367d6 100%);
+      color: white;
+      border: none;
+      padding: 22px;
+      font-size: 20px;
+      font-weight: 700;
+      border-radius: 15px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 30px rgba(66, 133, 244, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    
+    .submit-btn:hover:not(:disabled) {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(66, 133, 244, 0.4);
+      background: linear-gradient(135deg, #3367d6 0%, #2a56c4 100%);
+    }
+    
+    .submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+      background: #ccc;
+    }
+    
+    /* ===== MESSAGES ===== */
+    .message {
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 25px;
+      font-weight: 600;
+      text-align: center;
+      animation: slideDown 0.3s ease;
+    }
+    
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .success {
+      background: #d4edda;
+      color: #155724;
+      border: 2px solid #c3e6cb;
+    }
+    
+    .error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 2px solid #f5c6cb;
+    }
+    
+    .info {
+      background: #d1ecf1;
+      color: #0c5460;
+      border: 2px solid #bee5eb;
+    }
+    
+    /* ===== LOADING SPINNER ===== */
+    .spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s ease-in-out infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    /* ===== VALIDATION STYLES ===== */
+    .valid {
+      border-color: #34a853 !important;
+    }
+    
+    .invalid {
+      border-color: #ea4335 !important;
+    }
+    
+    .error-text {
+      color: #ea4335;
+      font-size: 12px;
+      margin-top: 5px;
+      display: block;
+    }
+    
+    /* ===== ENTRY ID DISPLAY ===== */
+    .entry-id {
+      background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+      color: white;
+      padding: 15px;
+      border-radius: 10px;
+      margin: 20px 0;
+      text-align: center;
+      font-weight: bold;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- HEADER SECTION -->
+    <div class="header">
+      <div class="logo-container">
+        <img src="https://amritcement.com/wp-content/uploads/2024/11/Logo1-2.png" 
+             alt="Amrit Cement Logo" class="amrit-logo" loading="lazy">
+        <div>
+          <h1>Amrit Medicine Distribution System</h1>
+          <div class="hindi-title">औषधि वितरण प्रणाली</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- FORM CONTAINER -->
+    <div class="form-container">
+      <!-- MESSAGE DISPLAY -->
+      <div id="message" class="message hidden"></div>
+      
+      <!-- ENTRY ID DISPLAY (After Submission) -->
+      <div id="entryIdDisplay" class="entry-id hidden"></div>
+      
+      <!-- MAIN FORM -->
+      <form id="medicineForm">
+        <!-- CATEGORY SELECTION -->
+        <div class="form-group">
+          <label>📋 Category <span class="required">*</span></label>
+          <select id="category" onchange="handleCategoryChange()" required>
+            <option value="">Select Category (Mandatory)</option>
+            <option value="Employee">👨‍💼 Employee</option>
+            <option value="Contractor">👷 Contractor</option>
+            <option value="Village">🏘️ Village</option>
+            <!-- ✅ ADDED NEW CATEGORIES -->
+            <option value="Injury">🤕 Injury</option>
+            <option value="Fastad Box">📦 Fastad Box</option>
+            <option value="Others">📝 Others</option>
+          </select>
+        </div>
+
+        <!-- EMPLOYEE/NAME SECTION -->
+        <div class="row">
+          <div class="form-group hidden" id="employeeGroup">
+            <label>🔢 Employee Code <span class="required">*</span></label>
+            <input type="text" id="employeeCode" 
+                   placeholder="Type employee code (min 3 characters)..." 
+                   required
+                   oninput="handleEmployeeSearch()">
+            <div class="employee-info" id="employeeInfo" style="display: none;">
+              <div id="empName"></div>
+              <div id="empDept"></div>
+            </div>
+          </div>
+          
+          <div class="form-group hidden" id="nameGroup">
+            <label>👤 Name <span class="required">*</span></label>
+            <input type="text" id="name" 
+                   placeholder="Enter full name" 
+                   required
+                   oninput="checkFormValidity()">
+          </div>
+        </div>
+
+        <!-- DEPARTMENT -->
+        <div class="form-group hidden" id="deptGroup">
+          <label>🏢 Department <span class="required">*</span></label>
+          <input type="text" id="department" 
+                 placeholder="Enter department" 
+                 required
+                 oninput="checkFormValidity()">
+        </div>
+
+        <!-- MEDICINES SECTION -->
+        <div class="medicine-section">
+          <h3>💊 Medicines <span class="required">*</span> (Each medicine will be saved in separate row)</h3>
+          <div id="medicinesContainer">
+            <!-- Medicine row 1 - Always present -->
+            <div class="medicine-row" data-row="1">
+              <select id="medicine1" onchange="calculateRate(1)" required>
+                <option value="">Select Medicine</option>
+              </select>
+              <input type="number" id="qty1" 
+                     placeholder="Qty *" 
+                     min="1" max="999" 
+                     onchange="calculateRate(1)" 
+                     required>
+              <input type="number" id="rate1" 
+                     placeholder="₹ Rate" 
+                     readonly 
+                     step="0.01">
+              <button type="button" class="remove-medicine" 
+                      onclick="removeMedicineRow(1)" 
+                      disabled style="opacity: 0.5;">×</button>
+            </div>
+          </div>
+          <button type="button" class="add-medicine" onclick="addMedicineRow()">
+            ➕ Add Another Medicine (Max 10)
+          </button>
+        </div>
+        
+        <!-- GRAND TOTAL -->
+        <div class="grand-total" id="grandTotal">
+          Grand Total: ₹0.00
+        </div>
+
+        <!-- REMARKS -->
+        <div class="form-group">
+          <label>📝 Remarks <span class="required">*</span></label>
+          <input type="text" id="remarks" 
+                 placeholder="Enter remarks (Mandatory)" 
+                 maxlength="200" 
+                 required
+                 oninput="checkFormValidity()">
+        </div>
+        
+        <!-- PHOTO/ATTACHMENT SECTION -->
+        <div class="photo-section">
+          <label style="color: white; font-size: 16px;">📸 Photo Proof (Camera or File) <span class="required">*</span></label>
+          
+          <div class="upload-options">
+            <div class="upload-option active" onclick="selectUploadMethod('camera')" id="cameraOption">
+              📷 Use Camera
+            </div>
+            <div class="upload-option" onclick="selectUploadMethod('file')" id="fileOption">
+              📎 Upload File
+            </div>
+          </div>
+          
+          <!-- CAMERA SECTION -->
+          <div id="cameraSection">
+            <video id="videoPreview" autoplay playsinline muted style="display:none;"></video>
+            <div class="camera-controls">
+              <button type="button" class="camera-btn" onclick="startCamera()">
+                🎥 Start Camera
+              </button>
+              <button type="button" class="switch-camera" onclick="switchCamera()" style="display:none;">
+                🔄 Switch Camera
+              </button>
+              <button type="button" class="capture-btn" onclick="capturePhoto()" disabled>
+                📸 Capture Photo
+              </button>
+            </div>
+          </div>
+
+          <!-- FILE UPLOAD SECTION -->
+          <div id="fileSection" style="display:none;">
+            <input type="file" id="fileInput" accept="image/*,.pdf,.doc,.docx,.jpg,.jpeg,.png" 
+                   onchange="handleFileUpload()" style="display:none;">
+            <button type="button" class="file-btn" onclick="document.getElementById('fileInput').click()">
+              📁 Choose File (Image/PDF)
+            </button>
+            <div id="fileInfo" class="file-info" style="display:none;"></div>
+          </div>
+          
+          <!-- Hidden inputs for photo/file data -->
+          <input type="hidden" id="photoDataUrl">
+          <input type="hidden" id="fileData">
+          <input type="hidden" id="fileName">
+          <input type="hidden" id="fileType">
+          
+          <div id="preview"></div>
+        </div>
+        
+        <!-- SUBMIT BUTTON -->
+        <button type="button" class="submit-btn" id="submitBtn" onclick="submitData()" disabled>
+          🚀 Submit → Save to Responses (Each Medicine in Separate Row)
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // ===== GLOBAL VARIABLES =====
+    let medicinesData = [];
+    let employeesData = [];
+    let medicineRowCount = 1;
+    let currentStream = null;
+    let isFrontCamera = false;
+    let currentUploadMethod = 'camera';
+    
+    // API Base URL - अब google.script.run की जगह fetch API use करेंगे
+    const API_BASE_URL = window.location.origin; // Local: 'http://localhost:3000', Production: auto-detect
+
+    // ===== PAGE LOAD =====
+    window.onload = function() {
+      console.log('🔄 Page loaded, initializing application...');
+      showMessage('🔄 Loading medicine data...', 'info');
+      
+      // Load data from server
+      loadData();
+      
+      // Set up event listeners
+      setupEventListeners();
+      
+      // Initial form validation check
+      setTimeout(checkFormValidity, 500);
+    };
+
+    // ===== DATA LOADING using FETCH API (Google Apps Script की जगह) =====
+    function loadData() {
+      // Load medicines from server
+      fetch(`${API_BASE_URL}/api/medicines`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(data => {
+          medicinesData = data || [];
+          console.log(`✅ Loaded ${medicinesData.length} medicines`);
+          updateMedicineDropdowns();
+          showMessage(`✅ Loaded ${medicinesData.length} medicines and rates`, 'success');
+        })
+        .catch(error => {
+          console.error('❌ Failed to load medicines:', error);
+          showMessage('⚠️ Could not load medicine rates. Please refresh.', 'error');
+          medicinesData = [];
+        });
+      
+      // Load employees from server
+      fetch(`${API_BASE_URL}/api/employees`)
+        .then(response => response.json())
+        .then(data => {
+          employeesData = data || [];
+          console.log(`✅ Loaded ${employeesData.length} employees`);
+          console.log('Sample employees:', employeesData.slice(0, 3));
+        })
+        .catch(error => {
+          console.error('❌ Failed to load employees:', error);
+          employeesData = [];
+        });
+    }
+
+    // ===== EVENT LISTENERS SETUP =====
+    function setupEventListeners() {
+      // Real-time validation listeners
+      document.getElementById('category').addEventListener('change', function() {
+        handleCategoryChange();
+        checkFormValidity();
+      });
+      
+      // Employee code input listener
+      const employeeCodeInput = document.getElementById('employeeCode');
+      if (employeeCodeInput) {
+        employeeCodeInput.addEventListener('input', function(e) {
+          handleEmployeeSearch();
+          checkFormValidity();
+        });
+      }
+      
+      document.getElementById('name').addEventListener('input', checkFormValidity);
+      document.getElementById('department').addEventListener('input', checkFormValidity);
+      document.getElementById('remarks').addEventListener('input', checkFormValidity);
+      
+      // Medicine quantity change listener (delegated)
+      document.getElementById('medicinesContainer').addEventListener('input', function(e) {
+        if (e.target.type === 'number') {
+          const rowNum = e.target.id.replace('qty', '');
+          calculateRate(rowNum);
+          checkFormValidity();
+        }
+      });
+      
+      // Medicine select change listener (delegated)
+      document.getElementById('medicinesContainer').addEventListener('change', function(e) {
+        if (e.target.tagName === 'SELECT') {
+          const rowNum = e.target.id.replace('medicine', '');
+          calculateRate(rowNum);
+          checkFormValidity();
+        }
+      });
+    }
+
+    // ===== MEDICINE FUNCTIONS =====
+    function updateMedicineDropdowns() {
+      const selects = document.querySelectorAll('select[id^="medicine"]');
+      selects.forEach(select => {
+        const currentValue = select.value;
+        select.innerHTML = '<option value="">🔍 Select Medicine *</option>';
+        
+        medicinesData.forEach(med => {
+          const option = document.createElement('option');
+          option.value = med.sku;
+          option.textContent = `${med.name} (${med.sku}) - ₹${med.rate.toFixed(2)}`;
+          option.dataset.rate = med.rate;
+          option.dataset.name = med.name;
+          option.dataset.sku = med.sku;
+          select.appendChild(option);
+        });
+        
+        if (currentValue) {
+          select.value = currentValue;
+        }
+      });
+    }
+
+    function addMedicineRow() {
+      if (medicineRowCount >= 10) {
+        showMessage('❌ Maximum 10 medicines allowed', 'error');
+        return;
+      }
+      
+      medicineRowCount++;
+      const container = document.getElementById('medicinesContainer');
+      
+      const newRow = document.createElement('div');
+      newRow.className = 'medicine-row';
+      newRow.dataset.row = medicineRowCount;
+      newRow.innerHTML = `
+        <select id="medicine${medicineRowCount}" onchange="calculateRate(${medicineRowCount})" required>
+          <option value="">Select Medicine</option>
+        </select>
+        <input type="number" id="qty${medicineRowCount}" 
+               placeholder="Qty *" min="1" max="999" onchange="calculateRate(${medicineRowCount})" required>
+        <input type="number" id="rate${medicineRowCount}" 
+               placeholder="₹ Rate" readonly step="0.01">
+        <button type="button" class="remove-medicine" 
+                onclick="removeMedicineRow(${medicineRowCount})">×</button>
+      `;
+      
+      container.appendChild(newRow);
+      updateMedicineDropdowns();
+      checkFormValidity();
+      
+      // Enable remove button for first row
+      document.querySelector('[data-row="1"] .remove-medicine').disabled = false;
+      document.querySelector('[data-row="1"] .remove-medicine').style.opacity = '1';
+    }
+
+    function removeMedicineRow(rowNum) {
+      if (medicineRowCount === 1) {
+        showMessage('❌ At least one medicine is required', 'error');
+        return;
+      }
+      
+      const row = document.querySelector(`[data-row="${rowNum}"]`);
+      if (row) {
+        row.remove();
+        medicineRowCount--;
+        
+        // Re-number remaining rows
+        const rows = document.querySelectorAll('.medicine-row');
+        rows.forEach((row, index) => {
+          const newRowNum = index + 1;
+          row.dataset.row = newRowNum;
+          row.querySelector('select').id = `medicine${newRowNum}`;
+          row.querySelector('select').onchange = function() { calculateRate(newRowNum); };
+          row.querySelector('input[type="number"]:nth-of-type(1)').id = `qty${newRowNum}`;
+          row.querySelector('input[type="number"]:nth-of-type(1)').onchange = function() { calculateRate(newRowNum); };
+          row.querySelector('input[type="number"]:nth-of-type(2)').id = `rate${newRowNum}`;
+          row.querySelector('.remove-medicine').onclick = function() { removeMedicineRow(newRowNum); };
+        });
+        
+        calculateGrandTotal();
+        checkFormValidity();
+      }
+    }
+
+    function calculateRate(rowNum) {
+      const select = document.getElementById(`medicine${rowNum}`);
+      const qtyInput = document.getElementById(`qty${rowNum}`);
+      const rateInput = document.getElementById(`rate${rowNum}`);
+      
+      if (!select || !qtyInput || !rateInput) return;
+      
+      if (select.value && qtyInput.value) {
+        const selectedOption = select.options[select.selectedIndex];
+        const unitRate = parseFloat(selectedOption.dataset.rate) || 0;
+        const quantity = parseInt(qtyInput.value) || 0;
+        const totalAmount = unitRate * quantity;
+        
+        rateInput.value = totalAmount.toFixed(2);
+      } else {
+        rateInput.value = '';
+      }
+      
+      calculateGrandTotal();
+    }
+
+    function calculateGrandTotal() {
+      let total = 0;
+      
+      for (let i = 1; i <= medicineRowCount; i++) {
+        const rateInput = document.getElementById(`rate${i}`);
+        if (rateInput && rateInput.value) {
+          total += parseFloat(rateInput.value) || 0;
+        }
+      }
+      
+      const grandTotalElement = document.getElementById('grandTotal');
+      if (grandTotalElement) {
+        grandTotalElement.textContent = `Grand Total: ₹${total.toFixed(2)}`;
+        grandTotalElement.dataset.total = total.toFixed(2);
+      }
+      
+      return total;
+    }
+
+    // ===== CATEGORY HANDLING =====
+    function handleCategoryChange() {
+      const category = document.getElementById('category').value;
+      const isEmployee = category === 'Employee';
+      
+      // Show/hide appropriate fields
+      document.getElementById('employeeGroup').classList.toggle('hidden', !isEmployee);
+      document.getElementById('nameGroup').classList.toggle('hidden', isEmployee);
+      document.getElementById('deptGroup').classList.remove('hidden');
+      
+      // Clear and reset fields
+      document.getElementById('employeeCode').value = '';
+      document.getElementById('name').value = '';
+      document.getElementById('department').value = '';
+      document.getElementById('employeeInfo').style.display = 'none';
+      document.getElementById('employeeInfo').innerHTML = '';
+      
+      // Set focus
+      if (isEmployee) {
+        document.getElementById('employeeCode').focus();
+      } else {
+        document.getElementById('name').focus();
+      }
+      
+      checkFormValidity();
+    }
+
+    // ===== EMPLOYEE SEARCH FUNCTION =====
+    function handleEmployeeSearch() {
+      const code = document.getElementById('employeeCode').value.trim();
+      const infoDiv = document.getElementById('employeeInfo');
+      
+      console.log('🔍 Searching for employee with code:', code);
+      console.log('Total employees loaded:', employeesData.length);
+      
+      if (code.length < 1) {
+        infoDiv.style.display = 'none';
+        document.getElementById('name').value = '';
+        document.getElementById('department').value = '';
+        return;
+      }
+      
+      // Case-insensitive search and exact match
+      const employee = employeesData.find(emp => {
+        const empCode = String(emp.code || '').trim();
+        const searchCode = code.trim();
+        return empCode.toLowerCase() === searchCode.toLowerCase();
+      });
+      
+      console.log('Employee found:', employee);
+      
+      if (employee) {
+        // Update employee info display
+        const nameDiv = document.getElementById('empName');
+        const deptDiv = document.getElementById('empDept');
+        
+        if (nameDiv) nameDiv.innerHTML = `👤 <strong>${employee.name}</strong>`;
+        if (deptDiv) deptDiv.innerHTML = `🏢 <strong>${employee.department}</strong>`;
+        
+        // Auto-fill name and department fields
+        document.getElementById('name').value = employee.name || '';
+        document.getElementById('department').value = employee.department || '';
+        
+        infoDiv.style.display = 'block';
+        infoDiv.style.background = '#d4edda';
+        infoDiv.style.color = '#155724';
+        
+        showMessage(`✅ Employee found: ${employee.name}`, 'success');
+      } else {
+        // Employee not found
+        const nameDiv = document.getElementById('empName');
+        const deptDiv = document.getElementById('empDept');
+        
+        if (nameDiv) nameDiv.innerHTML = '❌ Employee not found';
+        if (deptDiv) deptDiv.innerHTML = '';
+        
+        // Clear auto-filled fields
+        document.getElementById('name').value = '';
+        document.getElementById('department').value = '';
+        
+        infoDiv.style.display = 'block';
+        infoDiv.style.background = '#f8d7da';
+        infoDiv.style.color = '#721c24';
+        
+        showMessage('❌ Employee code not found. Please check and try again.', 'error');
+      }
+      
+      checkFormValidity();
+    }
+
+    // ===== UPLOAD METHOD SELECTION =====
+    function selectUploadMethod(method) {
+      currentUploadMethod = method;
+      
+      // Update UI
+      document.getElementById('cameraOption').classList.toggle('active', method === 'camera');
+      document.getElementById('fileOption').classList.toggle('active', method === 'file');
+      
+      // Show/hide sections
+      document.getElementById('cameraSection').style.display = method === 'camera' ? 'block' : 'none';
+      document.getElementById('fileSection').style.display = method === 'file' ? 'block' : 'none';
+      
+      // Clear previous data
+      if (method === 'camera') {
+        document.getElementById('fileData').value = '';
+        document.getElementById('fileName').value = '';
+        document.getElementById('fileType').value = '';
+        document.getElementById('fileInfo').style.display = 'none';
+        document.getElementById('fileInfo').innerHTML = '';
+      } else {
+        document.getElementById('photoDataUrl').value = '';
+        const video = document.getElementById('videoPreview');
+        video.style.display = 'none';
+        if (currentStream) {
+          currentStream.getTracks().forEach(track => track.stop());
+          currentStream = null;
+        }
+        document.getElementById('preview').innerHTML = '';
+      }
+      
+      checkFormValidity();
+    }
+
+    // ===== IMPROVED CAMERA FUNCTIONS =====
+    async function startCamera() {
+      try {
+        console.log('🎥 Starting camera...');
+        
+        // Stop any existing stream
+        if (currentStream) {
+          currentStream.getTracks().forEach(track => track.stop());
+        }
+        
+        const constraints = {
+          video: {
+            facingMode: isFrontCamera ? 'user' : 'environment',
+            width: { ideal: 1280 },
+            height: { ideal: 720 }
+          }
+        };
+        
+        currentStream = await navigator.mediaDevices.getUserMedia(constraints);
+        const video = document.getElementById('videoPreview');
+        video.srcObject = currentStream;
+        
+        // Wait for video to be ready before enabling capture
+        video.onloadedmetadata = () => {
+          video.play().then(() => {
+            console.log('✅ Video is playing, dimensions:', video.videoWidth, 'x', video.videoHeight);
+            document.querySelector('.capture-btn').disabled = false;
+          }).catch(e => {
+            console.error('❌ Video play failed:', e);
+            showMessage('❌ Could not start video playback.', 'error');
+          });
+        };
+        
+        video.style.display = 'block';
+        document.querySelector('.switch-camera').style.display = 'inline-block';
+        
+        showMessage('✅ Camera ready! You can now capture photo.', 'success');
+        checkFormValidity();
+        
+      } catch (error) {
+        console.error('❌ Camera error:', error);
+        let errorMsg = 'Camera access denied. ';
+        if (error.name === 'NotAllowedError') {
+          errorMsg += 'Please click the camera/lock icon in the address bar and allow camera access.';
+        } else if (error.name === 'NotFoundError') {
+          errorMsg += 'No camera found on this device.';
+        } else {
+          errorMsg += 'Unknown error. Check browser console for details.';
+        }
+        showMessage('❌ ' + errorMsg, 'error');
+      }
+    }
+
+    function switchCamera() {
+      isFrontCamera = !isFrontCamera;
+      if (currentStream) {
+        currentStream.getTracks().forEach(track => track.stop());
+        setTimeout(startCamera, 500);
+      }
+    }
+
+    function capturePhoto() {
+      try {
+        console.log('📸 Capturing photo...');
+        
+        const video = document.getElementById('videoPreview');
+        if (!video || video.videoWidth === 0 || video.videoHeight === 0) {
+          throw new Error('Video not ready yet. Please wait a moment and try again.');
+        }
+        
+        // Create canvas with video dimensions
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        
+        // Get high-quality JPEG data URL
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
+        
+        console.log('✅ Photo captured, data URL length:', dataUrl.length);
+        
+        // Store photo data
+        document.getElementById('photoDataUrl').value = dataUrl;
+        
+        // Show preview
+        document.getElementById('preview').innerHTML = `
+          <img src="${dataUrl}" class="preview-img" alt="Captured Photo">
+          <p style="color: white; margin-top: 10px;">✅ Photo captured successfully!</p>
+        `;
+        
+        // Stop camera to free resources
+        if (currentStream) {
+          currentStream.getTracks().forEach(track => track.stop());
+          currentStream = null;
+        }
+        video.style.display = 'none';
+        document.querySelector('.switch-camera').style.display = 'none';
+        document.querySelector('.capture-btn').disabled = true;
+        
+        showMessage('✅ Photo captured! Ready to submit.', 'success');
+        checkFormValidity();
+        
+      } catch (error) {
+        console.error('❌ Photo capture error:', error);
+        showMessage('❌ ' + error.message, 'error');
+      }
+    }
+
+    // ===== FILE UPLOAD FUNCTIONS =====
+    function handleFileUpload() {
+      const fileInput = document.getElementById('fileInput');
+      const fileInfo = document.getElementById('fileInfo');
+      const preview = document.getElementById('preview');
+      
+      if (!fileInput.files || fileInput.files.length === 0) {
+        return;
+      }
+      
+      const file = fileInput.files[0];
+      console.log('📎 File selected:', file.name, file.type, file.size);
+      
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        showMessage('❌ File size too large. Maximum 5MB allowed.', 'error');
+        fileInput.value = '';
+        return;
+      }
+      
+      // Validate file type
+      const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'application/pdf', 
+                         'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+      if (!validTypes.includes(file.type)) {
+        showMessage('❌ Invalid file type. Only images (JPG, PNG, GIF) and PDF/DOC allowed.', 'error');
+        fileInput.value = '';
+        return;
+      }
+      
+      // Show file info
+      fileInfo.style.display = 'block';
+      fileInfo.innerHTML = `
+        <strong>📄 Selected File:</strong> ${file.name}<br>
+        <strong>📦 Size:</strong> ${(file.size / 1024).toFixed(2)} KB<br>
+        <strong>📝 Type:</strong> ${file.type}
+      `;
+      
+      // Read file as base64
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const base64Data = e.target.result.split(',')[1]; // Remove data URL prefix
+        
+        // Store file data
+        document.getElementById('fileData').value = base64Data;
+        document.getElementById('fileName').value = file.name;
+        document.getElementById('fileType').value = file.type;
+        
+        // Show preview for images
+        if (file.type.startsWith('image/')) {
+          preview.innerHTML = `
+            <img src="${e.target.result}" class="preview-img" alt="Uploaded File">
+            <p style="color: white; margin-top: 10px;">✅ File uploaded successfully!</p>
+          `;
+        } else {
+          preview.innerHTML = `
+            <div style="background: white; color: #333; padding: 20px; border-radius: 10px; margin: 15px 0;">
+              <strong>📄 ${file.name}</strong><br>
+              File uploaded successfully!
+            </div>
+          `;
+        }
+        
+        showMessage('✅ File uploaded successfully! Ready to submit.', 'success');
+        checkFormValidity();
+      };
+      
+      reader.onerror = function(error) {
+        console.error('❌ File read error:', error);
+        showMessage('❌ Failed to read file. Please try again.', 'error');
+      };
+      
+      reader.readAsDataURL(file);
+    }
+
+    // ===== FORM VALIDATION =====
+    function checkFormValidity() {
+      const category = document.getElementById('category').value;
+      const remarks = document.getElementById('remarks').value.trim();
+      const submitBtn = document.getElementById('submitBtn');
+      
+      // Basic required fields check
+      if (!category || !remarks) {
+        submitBtn.disabled = true;
+        return;
+      }
+      
+      // Category-specific validation
+      if (category === 'Employee') {
+        const empCode = document.getElementById('employeeCode').value.trim();
+        if (!empCode) {
+          submitBtn.disabled = true;
+          return;
+        }
+      }
+      
+      // Name & Department validation
+      const name = document.getElementById('name').value.trim();
+      const dept = document.getElementById('department').value.trim();
+      if (!name || !dept) {
+        submitBtn.disabled = true;
+        return;
+      }
+      
+      // Photo/File validation
+      if (currentUploadMethod === 'camera') {
+        const photoDataUrl = document.getElementById('photoDataUrl').value;
+        if (!photoDataUrl || !photoDataUrl.startsWith('data:image')) {
+          submitBtn.disabled = true;
+          return;
+        }
+      } else {
+        const fileData = document.getElementById('fileData').value;
+        if (!fileData) {
+          submitBtn.disabled = true;
+          return;
+        }
+      }
+      
+      // Medicine validation - check at least one valid medicine
+      let hasValidMedicine = false;
+      for (let i = 1; i <= medicineRowCount; i++) {
+        const select = document.getElementById(`medicine${i}`);
+        const qty = document.getElementById(`qty${i}`);
+        
+        if (select && select.value && qty && qty.value && parseInt(qty.value) > 0) {
+          hasValidMedicine = true;
+          break;
+        }
+      }
+      
+      submitBtn.disabled = !hasValidMedicine;
+    }
+
+    // ===== FORM SUBMISSION using FETCH API =====
+    function submitData() {
+      console.log('🚀 Starting form submission...');
+      
+      // Get all form values
+      const category = document.getElementById('category').value;
+      const employeeCode = document.getElementById('employeeCode')?.value.trim() || '';
+      const name = document.getElementById('name').value.trim();
+      const department = document.getElementById('department').value.trim();
+      const remarks = document.getElementById('remarks').value.trim();
+      const photoDataUrl = document.getElementById('photoDataUrl')?.value || '';
+      const fileData = document.getElementById('fileData')?.value || '';
+      const fileName = document.getElementById('fileName')?.value || '';
+      const fileType = document.getElementById('fileType')?.value || '';
+      const grandTotal = calculateGrandTotal();
+      
+      // Validate required fields
+      if (!category) {
+        showMessage('❌ Please select a category', 'error');
+        return;
+      }
+      
+      if (!name) {
+        showMessage('❌ Please enter name', 'error');
+        return;
+      }
+      
+      if (!department) {
+        showMessage('❌ Please enter department', 'error');
+        return;
+      }
+      
+      if (!remarks) {
+        showMessage('❌ Please enter remarks', 'error');
+        return;
+      }
+      
+      // Validate photo/file
+      if (currentUploadMethod === 'camera') {
+        if (!photoDataUrl || !photoDataUrl.startsWith('data:image')) {
+          showMessage('❌ Please capture a photo first!', 'error');
+          return;
+        }
+      } else {
+        if (!fileData) {
+          showMessage('❌ Please upload a file first!', 'error');
+          return;
+        }
+      }
+      
+      // Collect medicines data with SKU
+      const medicines = [];
+      for (let i = 1; i <= medicineRowCount; i++) {
+        const select = document.getElementById(`medicine${i}`);
+        const qty = document.getElementById(`qty${i}`);
+        
+        if (select && select.value && qty && qty.value && parseInt(qty.value) > 0) {
+          const selectedOption = select.options[select.selectedIndex];
+          const medicineName = selectedOption.dataset.name || 'Unknown';
+          const unitRate = parseFloat(selectedOption.dataset.rate) || 0;
+          const sku = selectedOption.dataset.sku || '';
+          const quantity = parseInt(qty.value);
+          
+          medicines.push({
+            name: medicineName,
+            sku: sku,
+            quantity: quantity,
+            rate: unitRate
+          });
+        }
+      }
+      
+      if (medicines.length === 0) {
+        showMessage('❌ Please add at least one medicine', 'error');
+        return;
+      }
+      
+      // Prepare form data for submission
+      const formData = new FormData();
+      formData.append('category', category);
+      formData.append('employeeCode', employeeCode);
+      formData.append('employeeName', name);
+      formData.append('department', department);
+      formData.append('remarks', remarks);
+      formData.append('medicines', JSON.stringify(medicines));
+      
+      // Add photo/file data based on upload method
+      if (currentUploadMethod === 'camera' && photoDataUrl) {
+        formData.append('photoDataUrl', photoDataUrl);
+      } else if (currentUploadMethod === 'file' && fileData) {
+        // Convert base64 to blob for file upload
+        try {
+          const byteCharacters = atob(fileData);
+          const byteNumbers = new Array(byteCharacters.length);
+          for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+          }
+          const byteArray = new Uint8Array(byteNumbers);
+          const blob = new Blob([byteArray], { type: fileType });
+          formData.append('file', blob, fileName);
+        } catch (e) {
+          console.error('❌ Error converting base64:', e);
+          showMessage('❌ Error processing file. Please try again.', 'error');
+          return;
+        }
+      }
+      
+      console.log('📤 Submitting form data:', {
+        category: category,
+        name: name,
+        department: department,
+        medicinesCount: medicines.length,
+        grandTotal: grandTotal,
+        uploadMethod: currentUploadMethod
+      });
+      
+      // Disable submit button and show loading
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="spinner"></span> Uploading & Saving (Each Medicine in Separate Row)...';
+      
+      // Submit using fetch API
+      fetch(`${API_BASE_URL}/api/submit`, {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log('✅ Server response:', data);
+        
+        if (data && data.success) {
+          // Show entry ID
+          const entryIdDiv = document.getElementById('entryIdDisplay');
+          if (data.entryId) {
+            entryIdDiv.innerHTML = `📝 Entry ID: <strong>${data.entryId}</strong> (Saved in ${medicines.length} rows)`;
+            entryIdDiv.classList.remove('hidden');
+          }
+          
+          showMessage(data.message, 'success');
+          setTimeout(resetForm, 3000);
+        } else {
+          const errorMsg = data ? data.message : 'Unknown error occurred';
+          showMessage('❌ ' + errorMsg, 'error');
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '🚀 Submit → Save to Responses (Each Medicine in Separate Row)';
+        }
+      })
+      .catch(error => {
+        console.error('❌ Submission error:', error);
+        showMessage('❌ Error: ' + (error.message || 'Unknown error occurred'), 'error');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '🚀 Submit → Save to Responses (Each Medicine in Separate Row)';
+      });
+    }
+
+    // ===== FORM RESET =====
+    function resetForm() {
+      console.log('🔄 Resetting form...');
+      
+      // Hide entry ID display
+      document.getElementById('entryIdDisplay').classList.add('hidden');
+      document.getElementById('entryIdDisplay').innerHTML = '';
+      
+      // Reset form
+      document.getElementById('medicineForm').reset();
+      
+      // Reset medicine rows to 1
+      medicineRowCount = 1;
+      document.getElementById('medicinesContainer').innerHTML = `
+        <div class="medicine-row" data-row="1">
+          <select id="medicine1" onchange="calculateRate(1)" required>
+            <option value="">Select Medicine</option>
+          </select>
+          <input type="number" id="qty1" 
+                 placeholder="Qty *" min="1" max="999" 
+                 onchange="calculateRate(1)" required>
+          <input type="number" id="rate1" 
+                 placeholder="₹ Rate" readonly step="0.01">
+          <button type="button" class="remove-medicine" 
+                  onclick="removeMedicineRow(1)" 
+                  disabled style="opacity: 0.5;">×</button>
+        </div>
+      `;
+      
+      // Reset other elements
+      document.getElementById('grandTotal').textContent = 'Grand Total: ₹0.00';
+      document.getElementById('preview').innerHTML = '';
+      document.getElementById('employeeInfo').innerHTML = '';
+      document.getElementById('employeeInfo').style.display = 'none';
+      document.getElementById('photoDataUrl').value = '';
+      document.getElementById('fileData').value = '';
+      document.getElementById('fileName').value = '';
+      document.getElementById('fileType').value = '';
+      document.getElementById('fileInfo').style.display = 'none';
+      document.getElementById('fileInfo').innerHTML = '';
+      
+      // Hide camera video
+      const video = document.getElementById('videoPreview');
+      video.style.display = 'none';
+      if (currentStream) {
+        currentStream.getTracks().forEach(track => track.stop());
+        currentStream = null;
+      }
+      
+      // Reset upload method to camera
+      currentUploadMethod = 'camera';
+      document.getElementById('cameraOption').classList.add('active');
+      document.getElementById('fileOption').classList.remove('active');
+      document.getElementById('cameraSection').style.display = 'block';
+      document.getElementById('fileSection').style.display = 'none';
+      
+      // Reset submit button
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '🚀 Submit → Save to Responses (Each Medicine in Separate Row)';
+      
+      // Update dropdowns and handle category
+      updateMedicineDropdowns();
+      handleCategoryChange();
+      
+      // Focus on category
+      document.getElementById('category').focus();
+      
+      showMessage('✅ Form reset successfully. Ready for new entry.', 'success');
+    }
+
+    // ===== MESSAGE DISPLAY =====
+    function showMessage(message, type) {
+      const messageDiv = document.getElementById('message');
+      
+      if (!messageDiv) {
+        console.log('Message div not found');
+        return;
+      }
+      
+      messageDiv.textContent = message;
+      messageDiv.className = `message ${type}`;
+      messageDiv.classList.remove('hidden');
+      
+      // Auto-hide success messages after 5 seconds
+      if (type === 'success') {
+        setTimeout(() => {
+          messageDiv.classList.add('hidden');
+        }, 5000);
+      }
+    }
+  </script>
+</body>
+</html>
